@@ -52,23 +52,28 @@
           var lat, lng;
 
           $scope.register = function(){
-            // var url = "http://192.168.0.101:5000/register/company/login/" + $scope.inputLogin + "/password/" + .$scope.inputPassword + "/title/" + $scope.inputTitle + "/description/" + $scope.inputDescription + "/lat/" + lat + "/lon/" + lng + "/";
-            var url = "http://geomes.ru:8081/around/boris/24a1a1c25b9287c79d860f31515ff3das8/3?callback=logResults";
+            var url = "http://192.168.0.101:5000/register/company/login/" + $scope.inputLogin + "/password/" + $scope.inputPassword + "/title/" + $scope.inputTitle + "/description/" + $scope.inputDescription + "/lat/" + lat + "/lon/" + lng + "/";
+            // var url = "http://geomes.ru:8081/around/boris/24a1a1c25b9287c79d860f31515ff3das8/3?callback=logResults";
             console.log(url);
             $.ajax({
                 url: url,
                 dataType: 'jsonp',
                 jsonp: 'callback',
                 jsonpCallback: 'logResults',
+                accepts: "application/json",
+                contentType: "application/json; charset=utf-8",
                 success: function(){
-                    alert("success");
+                  alert("success");
+                },
+                error: function(err){
+                  console.log(err);
                 }
             });
             // $http.jsonp(url)
             //   .then(function(data){
             //     console.log("Data: " + data);
             //   }, function(error){
-            //     console.log("Error: " + error.toString());
+            //     console.log(error);
             //   });
           };
           var marker = 0;
