@@ -1,0 +1,16 @@
+<resources>
+    <string name="app_name">Where is my fun</string>
+    <string name="title_home">Главная</string>
+    <string name="title_ar">AR</string>
+    <string name="title_sale">Акции</string>
+    <string name="title_setting">Настройки</string>
+    <string name="title_statistic">Статистика</string>
+    <string name="title_activity_ar">ARActivity</string>
+
+    <string name="google_maps_key">AIzaSyAuX2hRWWOZ-xovginvE0lBTSBULHEebDw</string>
+    <string name="title_activity_sale">SaleActivity</string>
+    <string name="title_dashboard">Dashboard</string>
+    <string name="title_notifications">Notifications</string>
+    <string name="title_activity_statistics">StatisticsActivity</string>
+    <string name="title_activity_setting">SettingActivity</string>
+</resources>
