@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="ru" ng-app="app">
+  <head>
+    <title>Where is my fun?</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="http://netdna.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="http://netdna.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap-theme.min.css">
+    <link rel="stylesheet" href="http://ajax.googleapis.com/ajax/libs/angular_material/0.7.0/angular-material.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+    <script src="http://netdna.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.7/angular.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angular_material/1.1.0/angular-material.min.js"></script>
+  </head>
+  <style>
+    html, body { height:100%; padding:0; margin:0; }
+  </style>
+  <script>
+    function initMap(){
+      var map = new google.maps.Map(document.getElementById('map'), {
+        center: {lat: 55.0305718, lng: 82.9209871},
+        zoom: 14
+      });
+      if(navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(function(position) {
+            var latitude = position.coords.latitude;
+            var longitude = position.coords.longitude;
+            map.setCenter({lat: latitude, lng: longitude});
+            map1.setCenter({lat: latitude, lng: longitude});
+        });
+      } else {
+        alert("Geolocation API не поддерживается в вашем браузере");
+      }
+    }
+    function hideBtn(){
+      $("button").hide(500);
+    }
+    function showBtn(){
+      $("button").show(500);
+    }
+    function logResults(json){
+      console.log(json);
+    }
+    var app = angular
+      .module('app', [])
+      .config(function($httpProvider){
+        $httpProvider.defaults.useXDomain = true;
+        $httpProvider.defaults.headers.common["Accept"] = "application/jsonp";
+        $httpProvider.defaults.headers.common["Content-Type"] = "application/jsonp";
+        $httpProvider.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded;charset=utf-8';
+      })
+      .controller('MainCtrl', function($scope, $http){
+          var lat, lng;
+
+          $scope.register = function(){
+            // var url = "http://192.168.0.101:5000/register/company/login/" + $scope.inputLogin + "/password/" + .$scope.inputPassword + "/title/" + $scope.inputTitle + "/description/" + $scope.inputDescription + "/lat/" + lat + "/lon/" + lng + "/";
+            var url = "http://geomes.ru:8081/around/boris/24a1a1c25b9287c79d860f31515ff3das8/3?callback=logResults";
+            console.log(url);
+            $.ajax({
+                url: url,
+                dataType: 'jsonp',
+                jsonp: 'callback',
+                jsonpCallback: 'logResults',
+                success: function(){
+                    alert("success");
+                }
+            });
+            // $http.jsonp(url)
+            //   .then(function(data){
+            //     console.log("Data: " + data);
+            //   }, function(error){
+            //     console.log("Error: " + error.toString());
+            //   });
+          };
+          var marker = 0;
+          $('#register').on('shown.bs.modal', function() {
+              var map1 = new google.maps.Map(document.getElementById('mapregister'), {
+                center: {lat: 55.0305718, lng: 82.9209871},
+                zoom: 14
+              });
+              map1.addListener('click', function(ev){
+                // alert(ev.latLng.lat() + " " + ev.latLng.lng());
+                if(marker == 0){
+                  lat = ev.latLng.lat();
+                  lng = ev.latLng.lng();
+                  marker = new google.maps.Marker({
+                    position: {lat: ev.latLng.lat(), lng: ev.latLng.lng()},
+                    map: map1,
+                    title: 'Выбранное вами место ;)'
+                  });
+                }
+              })
+          });
+      });
+  </script>
+  <body ng-controller="MainCtrl">
+
+    <div id="map" style="width:100%; height:100%; position:absolute;" onMouseDown="hideBtn()" onMouseUp="showBtn()"></div>
+    <div class="row" style="margin-top:25%; position:absolute; width:100%;">
+      <div class="col-md-2"></div>
+      <div class="col-md-3">
+        <center><button type="button" class="btn btn-default btn-block" data-toggle="modal" data-target="#login" style="height:80px;">Вход</button></center>
+      </div>
+      <div class="col-md-2"></div>
+      <div class="col-md-3">
+        <center><button type="button" class="btn btn-primary btn-block" data-toggle="modal" data-target="#register" style="height:80px;">Регистрация</button></center>
+      </div>
+      <div class="col-md-2"></div>
+    </div>
+
+    <div class="modal fade" id="login" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+            <h4 class="modal-title" id="myModalLabel">Авторизация</h4>
+          </div>
+          <div class="modal-body">
+            ...
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Отмена</button>
+            <button type="button" class="btn btn-primary">Авторизация</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+    <div class="modal fade" id="register" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+            <h4 class="modal-title" id="myModalLabel">Регистрация</h4>
+          </div>
+          <div class="modal-body">
+            <div class="form-group">
+              <div class="col-md-12">
+                <input type="text" ng-model="inputLogin" class="form-control" id="inputLogin" placeholder="Логин">
+              </div>
+              <br /><br />
+              <div class="col-md-12">
+                <input type="password" ng-model="inputPassword" class="form-control" id="inputPassword" placeholder="Пароль">
+              </div>
+              <br /><br />
+              <div class="col-md-12">
+                <input type="text" ng-model="inputTitle" class="form-control" id="inputTitle" placeholder="Название">
+              </div>
+              <br /><br />
+              <div class="col-md-12">
+                <textarea class="form-control" ng-model="inputDescription" id="inputDescription" rows="4" placeholder="Описание"></textarea>
+              </div>
+              <br /><br />
+            </div><br /><br />
+            <center><div id="mapregister" style="width:500px; height:300px;"></div></center>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Отмена</button>
+            <button type="button" class="btn btn-primary" ng-click="register()">Регистрация</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyALURbJhS9VQZco2I_2Hia_-ltGSIJXinA&callback=initMap" async defer></script>
+  </body>
+</html>
