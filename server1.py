@@ -6,10 +6,10 @@ app = Flask(__name__)
 def connect():
     """ Connect to MySQL database """
     try:
-        conn = mysql.connector.connect(host='192.168.0.101',
-                                       database='wheremyfun',
-                                       user='sibsutis',
-                                       password='18091995')
+        conn = mysql.connector.connect(host='192.168.0.10',
+                                       database='where',
+                                       user='sib',
+                                       password='5')
         if conn.is_connected():
             print('Connected to MySQL database')
     except Error as e:
