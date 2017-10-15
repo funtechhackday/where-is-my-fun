@@ -6,10 +6,10 @@ app = Flask(__name__)
 def connect():
     """ Connect to MySQL database """
     try:
-        conn = mysql.connector.connect(host='192.168.0.10',
-                                       database='where',
-                                       user='sib',
-                                       password='5')
+        conn = mysql.connector.connect(host='192.168.0.101',
+                                       database='wheremyfun',
+                                       user='sibsutis',
+                                       password='18091995')
         if conn.is_connected():
             print('Connected to MySQL database')
     except Error as e:
@@ -213,6 +213,55 @@ def addBook(logC, logU, st, desc, res):
     except Error as error:
       print(error)
       status = 'error'
+    finally:
+      cursor.close()
+      connection.close()
+
+@app.route('/sales', methods=['GET'])
+def getSales():
+    connection = connect()
+    #query = "SELECT *  FROM companies"
+    query = "SELECT title, sales.description, lat, lon FROM companies, sales WHERE sales.login = companies.login"
+    listRows = []
+    try:
+        cursor = connection.cursor()
+        cursor.execute(query)
+        rows = cursor.fetchall()
+        print(rows)
+        for row in rows:
+            print(row)
+            (title, desc, lt, ln) = row
+            listRows = listRows + [{'titleComp':title,'describtion':desc,'lat':lt,'lon':ln}]
+            print(listRows)
+        if cursor.rowcount != 0:
+            status = 'ok'
+            return jsonify({'status': status, 'listRows':listRows})
+        else:
+            status = 'error'
+            return jsonify({'status': status})
+    except Error as error:
+      print(error)
+      status = 'error'
+    finally:
+      cursor.close()
+      connection.close()
+
+@app.route('/sales/companies/<log>/<desc>', methods=['GET'])
+def setSales(log,desc):
+    connection = connect()
+    query = "INSERT INTO sales(id,login,description) " \
+            "VALUES(%s,%s,%s)"
+    args = ("ll" ,log, desc)
+    try:
+      cursor = connection.cursor()
+      cursor.execute(query, args)
+      connection.commit()
+      state = 'ok'
+      return jsonify({'state': state})
+    except Error as error:
+      print(error)
+      state = 'error'
+      return jsonify({'state': state})
     finally:
       cursor.close()
       connection.close()
